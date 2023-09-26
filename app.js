@@ -13,10 +13,18 @@ const app = Vue.createApp({
 	},
 	computed: {
 		playerHealthBar() {
-			return { width: this.playerHealth + '%' }
+			// if (this.playerHealth < 0) {
+			// 	return { width: '0%' }
+			// }
+			// return { width: this.playerHealth + '%' }
+			return this.playerHealth < 0 ? { width: '0%' } : { width: this.playerHealth + '%' }
 		},
 		monsterHealthBar() {
-			return { width: this.monsterHealth + '%' }
+			// if (this.monsterHealth < 0) {
+			// 	return { width: '0%' }
+			// }
+			// return { width: this.monsterHealth + '%' }
+			return this.monsterHealth < 0 ? { width: '0%' } : { width: this.monsterHealth + '%' }
 		},
 	},
 	watch: {
@@ -38,6 +46,15 @@ const app = Vue.createApp({
 	methods: {
 		getRandomValue(max, min) {
 			return Math.floor(Math.random() * (max - min)) + min
+		},
+		startGame() {
+			this.playerHealth = 100
+			this.monsterHealth = 100
+			this.currentRound = 0
+			Object.keys(this.cooldown).forEach((type) => {
+				this.cooldown[type] = 0
+			})
+			this.winner = null
 		},
 		attackMonster() {
 			this.currentRound++
@@ -72,6 +89,9 @@ const app = Vue.createApp({
 			this.attackPlayer()
 			this.cooldown.heal += 3
 			this.cooldown.specialAttack = Math.max(0, --this.cooldown.specialAttack)
+		},
+		surrender() {
+			this.winner = 'monster'
 		},
 	},
 })
